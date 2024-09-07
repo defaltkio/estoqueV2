@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Estoque - Leomar Bombas </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function preencherNomeAdicionar() {
+            var id = document.getElementById('add-id').value;
+            var nomeInput = document.getElementById('add-nome');
+            var items = {{ estoque | tojson | safe }};
+            var item = items.find(item => item.id === parseInt(id));
+
+            if (item) {
+                nomeInput.value = item.nome;
+                nomeInput.disabled = true;
+            } else {
+                nomeInput.value = '';
+                nomeInput.disabled = false;
+            }
+        }
+
+        function preencherNomeVender() {
+            var id = document.getElementById('vender-id').value;
+            var nomeInput = document.getElementById('vender-nome');
+            var items = {{ estoque | tojson | safe }};
+            var item = items.find(item => item.id === parseInt(id));
+
+            if (item) {
+                nomeInput.value = item.nome;
+                nomeInput.disabled = true;
+            } else {
+                nomeInput.value = '';
+                nomeInput.disabled = false;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gerenciamento de Estoque - Leomar Bombas</h1>
+        </header>
+        <main>
+            <section class="search">
+                <h2>Buscar Item</h2>
+                <form action="{{ url_for('buscar') }}" method="GET">
+                    <input type="text" name="query" placeholder="Digite o ID ou Nome do item">
+                    <input type="submit" value="Buscar" class="btn btn-add">
+                </form>
+            </section>
+
+            <section class="item-list">
+                <h2>Itens no Estoque</h2>
+                <ul>
+                    {% for item in estoque %}
+                    <li>
+                        <div class="item-info">
+                            <span>ID: {{ item.id }}</span>
+                            <span>Nome: {{ item.nome }}</span>
+                            <span>Quantidade: {{ item.quantidade }}</span>
+                        </div>
+                        <div class="item-actions">
+                            <a href="{{ url_for('deletar', id=item.id) }}" class="btn btn-delete">Deletar</a>
+                            <form action="{{ url_for('atualizar', id=item.id) }}" method="POST" class="update-form">
+                                <input type="text" name="nome" value="{{ item.nome }}" required placeholder="Nome">
+                                <input type="number" name="quantidade" value="{{ item.quantidade }}" required placeholder="Quantidade">
+                                <input type="submit" value="Atualizar" class="btn btn-update">
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="add-item">
+                <h2>Adicionar Novo Item</h2>
+                <form action="{{ url_for('adicionar') }}" method="POST">
+                    <input type="number" id="add-id" name="id" required placeholder="ID" oninput="preencherNomeAdicionar()">
+                    <input type="text" id="add-nome" name="nome" required placeholder="Nome">
+                    <input type="number" name="quantidade" required placeholder="Quantidade">
+                    <input type="submit" value="Adicionar" class="btn btn-add">
+                </form>
+            </section>
+
+            <section class="sell-item">
+                <h2>Vender Item</h2>
+                <form action="{{ url_for('vender') }}" method="POST">
+                    <input type="number" id="vender-id" name="id" required placeholder="ID" oninput="preencherNomeVender()">
+                    <input type="text" id="vender-nome" name="nome" required placeholder="Nome" disabled>
+                    <input type="number" name="quantidade" required placeholder="Quantidade">
+                    <input type="submit" value="Vender" class="btn btn-sell">
+                </form>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

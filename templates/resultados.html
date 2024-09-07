@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados da Busca</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Resultados da Busca</h1>
+        </header>
+        <main>
+            <section class="search-item">
+                <h2>Buscar Item</h2>
+                <form action="{{ url_for('buscar') }}" method="GET">
+                    <input type="text" name="query" placeholder="Digite o ID ou Nome do item">
+                    <input type="submit" value="Buscar" class="btn btn-search">
+                </form>
+            </section>
+
+            <section class="item-list">
+                <h2>Itens Encontrados</h2>
+                <ul>
+                    {% for item in estoque %}
+                    <li>
+                        <div class="item-info">
+                            <span>ID: {{ item.id }}</span>
+                            <span>Nome: {{ item.nome }}</span>
+                            <span>Quantidade: {{ item.quantidade }}</span>
+                        </div>
+                        <div class="item-actions">
+                            <a href="{{ url_for('deletar', id=item.id) }}" class="btn btn-delete">Deletar</a>
+                            <form action="{{ url_for('atualizar', id=item.id) }}" method="POST" class="update-form">
+                                <input type="text" name="nome" value="{{ item.nome }}" required placeholder="Nome">
+                                <input type="number" name="quantidade" value="{{ item.quantidade }}" required placeholder="Quantidade">
+                                <input type="submit" value="Atualizar" class="btn btn-update">
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <a href="{{ url_for('index') }}" class="btn btn-back">Voltar ao Estoque</a>
+        </main>
+    </div>
+</body>
+</html>
